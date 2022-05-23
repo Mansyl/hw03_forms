@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="ru"> 
+  <head>  
+    <!-- Подключены иконки, стили и заполенены мета теги -->
+    <title>Профайл пользователя {{ author }}</title>
+  </head>
+  <body>       
+    <header>
+      <nav class="navbar navbar-light" style="background-color: lightskyblue">
+        <div class="container">
+          <a class="navbar-brand" href="/">
+            <img src="/static/img/logo.png" width="30" height="30" class="d-inline-block align-top" alt="">
+            <span style="color:red">Ya</span>tube
+          </a>
+        </div>
+      </nav>      
+    </header>
+    <main>
+      {% for post in page_obj %}
+      <div class="container py-5">        
+        <h1>Все посты пользователя {{ author }} </h1>
+        <h3>Всего постов: {{ author.posts.count }} </h3>   
+        <article>
+          <ul>
+            <li>
+              Автор: {{ author }}
+              <a href= "{% url 'posts:profile' author.username %}" >все посты пользователя</a>
+            </li>
+            <li>
+              Дата публикации: {{ post.pub_date|date:"d E Y" }}
+            </li>
+          </ul>
+          <p>{{ post.text }}
+          </p>
+          <a href="{% url 'posts:post_detail' post.id %}">подробная информация </a>
+        </article>
+        {% if post.group%}       
+          <a href="{% url 'posts:group_list' post.group.slug %}">все записи группы</a>  
+        {% endif %}      
+        <hr>
+        <!-- Остальные посты. после последнего нет черты -->
+        <!-- Здесь подключён паджинатор -->  
+      </div>
+      {% endfor %}
+    </main>
+    <footer class="border-top text-center py-3">
+      <p>© <!--2021 --> Copyright <span style="color:red">Ya</span>tube</p>    
+    </footer>
+  </body>
+</html> 

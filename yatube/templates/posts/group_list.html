@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+{% extends 'base.html' %} 
+<html lang="ru">
+  {% block head %}
+  <head>    
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="icon" href="img/fav/fav.ico" type="image">
+    <link rel="apple-touch-icon" sizes="180x180" href="img/fav/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="img/fav/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="img/fav/favicon-16x16.png">
+    <meta name="msapplication-TileColor" content="#000">
+    <meta name="theme-color" content="#ffffff">
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <title>{{ group }}</title>
+  </head>
+  {% endblock %} 
+{% block content %}
+  <body>
+    <main>
+      <div class="container py-5">
+        <h1>{% block header %}{{ group.title }}{% endblock %}</h1>
+        <p>{{ group.description  }}</p>
+        <p> описание_группы </p>
+        {% for post in page_obj %}
+        <ul>
+          <li>
+            Автор: {{ post.author.get_full_name }}
+          </li>
+          <li>
+            Дата публикации: {{ post.pub_date|date:"d E Y" }}
+          </li>
+        </ul>
+        <p> {{ post.text }} </p>
+        {% if post.group %}
+        <a 
+          href="{% url 'posts:group_list' post.group.slug %}">
+          все записи группы
+        </a>
+        {% endif %}
+        {% if not forloop.last %}<hr>{% endif %}
+        {% endfor %}
+      </div>  
+    </main>
+  </body>
+{% include 'includes/paginator.html' %}
+{% endblock %} 
