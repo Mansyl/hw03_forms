@@ -18,12 +18,16 @@ class Posts(models.Model):
         abstract = True
 
 
+def paginator(page_number, post_list):
+    paginator = Paginator(post_list, Posts.number_of_posts)
+    return paginator.get_page(page_number)
+
+
 def index(request):
-    post_list = Post.objects.all().order_by('-pub_date')
-    number_of_posts = Posts.number_of_posts
-    paginator = Paginator(post_list, number_of_posts)
+    post_list = Post.objects.select_related('author').all().order_by(
+        '-pub_date')
     page_number = request.GET.get('page')
-    page_obj = paginator.get_page(page_number)
+    page_obj = paginator(page_number, post_list)
     context = {
         'page_obj': page_obj,
         'title': 'Последние посты'
@@ -32,12 +36,10 @@ def index(request):
 
 
 def group_posts(request, slug):
-    number_of_posts = Posts.number_of_posts
     group = get_object_or_404(Group, slug=slug)
     post_list = Post.objects.filter(group=group).order_by('-pub_date')
-    paginator = Paginator(post_list, number_of_posts)
     page_number = request.GET.get('page')
-    page_obj = paginator.get_page(page_number)
+    page_obj = paginator(page_number, post_list)
     context = {
         'title': f'Записи сообщества "{group.title}"',
         'page_obj': page_obj,
@@ -73,12 +75,10 @@ class AboutAuthorView(TemplateView):
 
 
 def profile(request, username):
-    number_of_posts = Posts.number_of_posts
     author = get_object_or_404(User, username=username)
     posts = author.posts.all().order_by('-pub_date')
-    paginator = Paginator(posts, number_of_posts)
     page_number = request.GET.get('page')
-    page_obj = paginator.get_page(page_number)
+    page_obj = paginator(page_number, posts)
     context = {'page_obj': page_obj,
                'posts': posts,
                'author': author, }
